@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Varejo 2026 - Rema Distribuidora</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; color: #333; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 10px; }
+        
+        .header-info { background: #e8f0fe; padding: 15px; border-radius: 8px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; border: 1px solid #1a73e8; }
+        .header-info label { font-weight: bold; color: #1a73e8; font-size: 16px; }
+        .header-info input { flex-grow: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; font-weight: bold; text-transform: uppercase; }
+
+        .section { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 5px solid #1a73e8; margin-bottom: 20px; }
+        .section-deflator { border-left-color: #dc3545; }
+        h3 { margin-top: 0; color: #1a73e8; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 5px; }
+        
+        /* Estilos para as observações */
+        .obs-vermelha { font-size: 12px; color: #d32f2f; font-weight: bold; margin-bottom: 4px; display: block; }
+        .obs-regras { font-size: 11px; color: #666; font-style: italic; margin-bottom: 12px; display: block; text-transform: uppercase; }
+        .sub-obs { font-size: 10px; color: #777; display: block; font-weight: normal; margin-top: 2px; text-transform: uppercase; }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #fff; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #e8f0fe; color: #1a73e8; }
+        .section-deflator th { background: #fbe9e7; color: #d32f2f; }
+        
+        input[type="text"], input[type="number"] { width: 95%; padding: 4px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        .calc-field { background-color: #eee; font-weight: bold; border: 1px solid #ccc; padding: 4px; border-radius: 4px; text-align: center; width: 85px; }
+        .destaque-comissao { background-color: #e3f2fd !important; border: 1px solid #1a73e8 !important; color: #0d47a1 !important; }
+
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .input-group { margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        
+        .totais-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; border-radius: 8px; overflow: hidden; }
+        .totais-table th, .totais-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .row-final { background: #1a73e8; color: white; font-size: 16px; font-weight: bold; }
+        .negativo { color: #d93025; font-weight: bold; }
+        
+        .badge-real { background: #fff; color: #1a73e8; padding: 3px 10px; border-radius: 5px; margin-left: 10px; border: 1px solid #fff; font-size: 14px; }
+        .txt-penalidade { color: #d32f2f; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Calculadora de Remuneração 2026 - CLT</h1>
+    
+    <div class="header-info">
+        <label for="nomeVendedor">Vendedor(a):</label>
+        <input type="text" id="nomeVendedor" placeholder="Digite o nome completo do colaborador...">
+    </div>
+
+    <div class="section">
+        <h3>1. Premiação Base</h3>
+        <span class="obs-vermelha">Observação: período de apuração do dia 1 a 31 de cada mês</span>
+        <span class="obs-regras">REGRAS: 85% a 89,9% (1,10%) | 90% a 94,9% (1,35%) | 95% a 99,9% (1,60%) | 100% a 109,9% (1,85%) | 110% em diante (2,10%)</span>
+        
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label>Meta Financeira Global (R$):</label>
+                <input type="text" id="metaGlobal" value="100.000,00" oninput="mascaraMoeda(this); calcular()">
+            </div>
+            <div class="input-group">
+                <label>Venda Realizada Global (R$):</label>
+                <input type="text" id="vendaGlobal" value="100.000,00" oninput="mascaraMoeda(this); calcular()">
+            </div>
+            <div class="input-group">
+                <label>Atingimento Global (%):</label>
+                <input type="text" id="percGlobal" class="calc-field" readonly>
+            </div>
+            <div class="input-group">
+                <label>Comissão Base (%):</label>
+                <input type="text" id="percBaseMostrador" class="calc-field destaque-comissao" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>2. Gratificação por Fornecedor (Acumulativos)</h3>
+        <span class="obs-vermelha">Observação: período de apuração do dia 1 a 31 de cada mês</span>
+        <span class="obs-regras">PARA CADA FORNECEDOR: 85% a 89,9% (+0,10%) | 90% a 94,9% (+0,15%) | 95% a 99,9% (+0,20%) | 100% a 109,9% (+0,25%) | 110% em diante (+0,30%)</span>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:left">Fornecedor</th>
+                    <th>Meta (R$)</th>
+                    <th>Realizado (R$)</th>
+                    <th>Ating. (%)</th>
+                    <th>Bônus (%)</th>
+                </tr>
+            </thead>
+            <tbody id="corpoFornecedores"></tbody>
+        </table>
+    </div>
+
+    <div class="grid-inputs">
+        <div class="section">
+            <h3>3. Prêmios Variáveis</h3>
+            <span class="obs-vermelha">Observação: período de apuração do dia 1 a 31 de cada mês</span>
+            
+            <div class="input-group">
+                <div>
+                    <strong>DN (Distribuição Numérica) - 0,60%</strong>
+                    <span class="sub-obs">PRÊMIO - 90% CARTEIRA GERAL ATENDIDA MÊS + 80% DANONE + 80% PULLMAN</span>
+                </div>
+                <input type="checkbox" id="checkDN" onchange="calcular()">
+            </div>
+            <div class="input-group">
+                <div>
+                    <strong>Meta Financeira Semanal - 0,60%</strong>
+                    <span class="sub-obs">PRÊMIO - METAS ENTREGUES POR SEMANA</span>
+                </div>
+                <input type="checkbox" id="checkSemanal" onchange="calcular()">
+            </div>
+            <div class="input-group">
+                <div>
+                    <strong>Produto Foco - 1,00%</strong>
+                    <span class="sub-obs">PRÊMIO - PRODUTO FOCO ENTREGUE NAS SEMANAS</span>
+                </div>
+                <input type="checkbox" id="checkFoco" onchange="calcular()">
+            </div>
+        </div>
+
+        <div class="section section-deflator">
+            <h3>4. Deflatores (Qualidade)</h3>
+            <span class="obs-vermelha">Observação: período de apuração do dia 1 a 31 de cada mês</span>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:left">Indicador</th>
+                        <th>Penalidade (%)</th>
+                        <th>Realizado (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align:left">
+                            <strong>Devolução</strong>
+                            <span class="sub-obs">Reduz 0,60% se > 1,0%</span>
+                        </td>
+                        <td class="txt-penalidade">-0,60%</td>
+                        <td><input type="number" id="atingDevPerc" value="0.0" step="0.01" oninput="calcular()"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left">
+                            <strong>Trocas</strong>
+                            <span class="sub-obs">Reduz 1,00% se > 3,5%</span>
+                        </td>
+                        <td class="txt-penalidade">-1,00%</td>
+                        <td><input type="number" id="atingTrocaPerc" value="0.0" step="0.01" oninput="calcular()"></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left">
+                            <strong>Inadimplência</strong>
+                            <span class="sub-obs">Reduz 0,30% se > 1,0%</span>
+                        </td>
+                        <td class="txt-penalidade">-0,30%</td>
+                        <td><input type="number" id="atingInadPerc" value="0.0" step="0.01" oninput="calcular()"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <table class="totais-table">
+        <thead>
+            <tr>
+                <th>Resumo Final</th>
+                <th>Percentual (%)</th>
+                <th>Valor Estimado (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1. Premiação Base</td>
+                <td id="resPercBase">0.00%</td>
+                <td id="resValBase">R$ 0,00</td>
+            </tr>
+            <tr>
+                <td>2. Gratificação por Fornecedores</td>
+                <td id="resPercGratificacao">0.00%</td>
+                <td id="resValGratificacao">R$ 0,00</td>
+            </tr>
+            <tr>
+                <td>3. Prêmios Variáveis</td>
+                <td id="resPercVariaveis">0.00%</td>
+                <td id="resValVariaveis">R$ 0,00</td>
+            </tr>
+            <tr>
+                <td>4. Deflatores</td>
+                <td id="resPercDeflator" class="negativo">0.00%</td>
+                <td id="resValDeflator" class="negativo">R$ 0,00</td>
+            </tr>
+            <tr class="row-final">
+                <td>TOTAL GERAL</td>
+                <td id="resPercGeral">0.00%</td>
+                <td id="resValGeral">R$ 0,00</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // AQUI FOI FEITA A ALTERAÇÃO: Adicionados Danone MG e Natural One
+    const fornecedores = [
+        "Bimbo (Pullman)", 
+        "Danone", 
+        "Danone Nutricia", 
+        "Catupiry", 
+        "Lindt", 
+        "Tirolez", 
+        "Adociks",
+        "Danone MG (Danette)",
+        "Natural One"
+    ];
+
+    function mascaraMoeda(input) {
+        let valor = input.value.replace(/\D/g, '');
+        valor = (valor / 100).toFixed(2) + '';
+        valor = valor.replace(".", ",");
+        valor = valor.replace(/(\d)(\d{3})(\d{3}),/g, "$1.$2.$3,");
+        valor = valor.replace(/(\d)(\d{3}),/g, "$1.$2,");
+        input.value = valor;
+    }
+
+    function parseFinanceiro(valorStr) {
+        if (!valorStr) return 0;
+        return parseFloat(valorStr.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    function initFornecedores() {
+        const tbody = document.getElementById('corpoFornecedores');
+        tbody.innerHTML = ""; // Limpa a tabela antes de recriar, boa prática
+        
+        fornecedores.forEach((nome) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td style="text-align:left"><strong>${nome}</strong></td>
+                <td><input type="text" class="metaForn" value="0,00" oninput="mascaraMoeda(this); calcular()"></td>
+                <td><input type="text" class="realForn" value="0,00" oninput="mascaraMoeda(this); calcular()"></td>
+                <td><input type="text" class="percForn calc-field" readonly style="width: 60px;"></td>
+                <td><input type="text" class="bonusForn calc-field" readonly style="width: 60px; color: #28a745;"></td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function getTierValue(atingimento, isBase) {
+        if (atingimento >= 110) return isBase ? 2.10 : 0.30;
+        if (atingimento >= 100) return isBase ? 1.85 : 0.25;
+        if (atingimento >= 95)  return isBase ? 1.60 : 0.20;
+        if (atingimento >= 90)  return isBase ? 1.35 : 0.15;
+        if (atingimento >= 85)  return isBase ? 1.10 : 0.10;
+        return 0;
+    }
+
+    function calcular() {
+        const vendaGlobal = parseFinanceiro(document.getElementById('vendaGlobal').value);
+        const metaGlobal = parseFinanceiro(document.getElementById('metaGlobal').value);
+        const atingGlobal = metaGlobal > 0 ? (vendaGlobal / metaGlobal) * 100 : 0;
+        document.getElementById('percGlobal').value = atingGlobal.toFixed(2) + "%";
+        
+        let percBase = getTierValue(atingGlobal, true);
+        document.getElementById('percBaseMostrador').value = percBase.toFixed(2) + "%";
+
+        let percPremioForn = 0;
+        const metaF = document.querySelectorAll('.metaForn');
+        const realF = document.querySelectorAll('.realForn');
+        const percF = document.querySelectorAll('.percForn');
+        const bonusF = document.querySelectorAll('.bonusForn');
+
+        realF.forEach((input, i) => {
+            const realVal = parseFinanceiro(input.value);
+            const metaVal = parseFinanceiro(metaF[i].value);
+            const ating = metaVal > 0 ? (realVal / metaVal) * 100 : 0;
+            const b = getTierValue(ating, false);
+            percF[i].value = ating.toFixed(2) + "%";
+            bonusF[i].value = b.toFixed(2) + "%";
+            percPremioForn += b;
+        });
+
+        let percPremioVar = 0;
+        if (document.getElementById('checkDN').checked) percPremioVar += 0.60;
+        if (document.getElementById('checkSemanal').checked) percPremioVar += 0.60;
+        if (document.getElementById('checkFoco').checked) percPremioVar += 1.00;
+
+        let percDeflatorTotal = 0;
+        // Regra Devolução -0.60% se > 1.0%
+        if (parseFloat(document.getElementById('atingDevPerc').value) > 1.0) percDeflatorTotal -= 0.60;
+        // Regra Trocas -1.00% se > 3.5%
+        if (parseFloat(document.getElementById('atingTrocaPerc').value) > 3.5) percDeflatorTotal -= 1.00;
+        // Regra Inadimplência -0.30% se > 1.0%
+        if (parseFloat(document.getElementById('atingInadPerc').value) > 1.0) percDeflatorTotal -= 0.30;
+
+        const f = (val) => val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        
+        // Total Geral
+        const percGeral = percBase + percPremioForn + percPremioVar + percDeflatorTotal;
+        const valorCalculado = (percGeral / 100) * vendaGlobal;
+        const comissaoReal = Math.max(0, valorCalculado);
+
+        // Preencher Tabela Resumo
+        document.getElementById('resPercBase').innerText = percBase.toFixed(2) + "%";
+        document.getElementById('resValBase').innerText = f((percBase/100) * vendaGlobal);
+        
+        document.getElementById('resPercGratificacao').innerText = percPremioForn.toFixed(2) + "%";
+        document.getElementById('resValGratificacao').innerText = f((percPremioForn/100) * vendaGlobal);
+        
+        document.getElementById('resPercVariaveis').innerText = percPremioVar.toFixed(2) + "%";
+        document.getElementById('resValVariaveis').innerText = f((percPremioVar/100) * vendaGlobal);
+        
+        document.getElementById('resPercDeflator').innerText = percDeflatorTotal.toFixed(2) + "%";
+        document.getElementById('resValDeflator').innerText = f((percDeflatorTotal/100) * vendaGlobal);
+        
+        document.getElementById('resPercGeral').innerText = percGeral.toFixed(2) + "%";
+        document.getElementById('resValGeral').innerHTML = 
+            `Matemático: ${f(valorCalculado)} | <span class="badge-real">Prêmio Total: ${f(comissaoReal)}</span>`;
+    }
+
+    initFornecedores();
+    calcular();
+</script>
+</body>
+</html>
