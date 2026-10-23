@@ -1,0 +1,7 @@
+import {AuthError} from './admin-auth-core';
+export async function validateSellerBinding(db:D1Database,email:string,key:string,rca:string){
+const other=await db.prepare('SELECT email FROM portal_users WHERE email<>? AND (seller_key=? OR rca=?)').bind(email,key,rca).first();
+if(other)throw new AuthError(409,'Este vendedor ou RCA já está associado a outro usuário.');
+if(key.startsWith('roster:')){const ref=await db.prepare('SELECT rca FROM seller_roster WHERE id=?').bind(key.slice(7)).first<{rca:string}>();if(!ref||ref.rca!==rca)throw new AuthError(400,'O RCA deve corresponder ao cadastro de referência.');const dup=await db.prepare('SELECT COUNT(*) AS n FROM seller_roster WHERE rca=?').bind(rca).first<{n:number}>();if((dup?.n||0)>1)throw new AuthError(409,'O RCA aparece em duas pessoas. Corrija a referência antes de liberar.');}
+}
+export async function validateActivation(db:D1Database,email:string){const row=await db.prepare('SELECT seller_key,role,rca FROM portal_users WHERE email=?').bind(email).first<{seller_key:string|null;role:string;rca:string|null}>();if(row?.role==='seller'){if(!row.seller_key||!row.rca)throw new AuthError(400,'Vincule o vendedor e o RCA antes de liberar.');let rca=row.rca;if(row.seller_key.startsWith('roster:')){const ref=await db.prepare('SELECT rca FROM seller_roster WHERE id=?').bind(row.seller_key.slice(7)).first<{rca:string}>();if(ref)rca=ref.rca;}await validateSellerBinding(db,email,row.seller_key,rca);await db.prepare('UPDATE portal_users SET rca=? WHERE email=?').bind(rca,email).run();}}

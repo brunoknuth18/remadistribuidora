@@ -1,0 +1,23 @@
+export const normalizeName=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase();
+export const SELLER_ROSTER=[
+{id:'bruno-knuth-teste',rca:'1500',name:'Bruno Chagas Knuth',region:'Testes',aliases:['Bruno Knuth']},
+{id:'isabel-ferreira',rca:'252',name:'Isabel Ferreira Gondim',region:'Sudeste',aliases:['Isabel Ferreira']},
+{id:'claudinei-vicente',rca:'79',name:'Claudinei Vicente Costa',region:'Sudeste',aliases:['Claudinei Vicente']},
+{id:'lidiane-santana',rca:'162',name:'Lidiane de Santana Silva',region:'Sudeste',aliases:['Lidiane Santana']},
+{id:'zilma-inacio',rca:'20',name:'Zilma Inácio da Silva',region:'Sudeste',aliases:['Zilma Inácio']},
+{id:'daniel-santos',rca:'346',name:'Daniel Santos Oliveira',region:'Sudoeste',aliases:['Daniel Santos']},
+{id:'elis-regina',rca:'351',name:'Elis Regina Batista da Silva',region:'Sudoeste',aliases:['Elis Regina']},
+{id:'luciano-borges',rca:'354',name:'Luciano Borges Alves',region:'Sudoeste',aliases:['Luciano Borges']},
+{id:'marcela-cristina',rca:'352',name:'Marcela Cristina Rezende',region:'Sudoeste',aliases:['Marcela Cristina']},
+{id:'odair-pereira',rca:'350',name:'Odair Pereira da Costa',region:'Sudoeste',aliases:['Odair Pereira']},
+{id:'rosilane-oliveira',rca:'334',name:'Rosilane Oliveira Maciel',region:'Sudoeste',aliases:['Rosilane Oliveira']},
+{id:'vitor-matheus',rca:'348',name:'Vitor Matheus Barcelos de Souza',region:'Sudoeste',aliases:['Vitor Matheus']},
+{id:'fabio-henrique',rca:'17',name:'Fábio Henrique Lara Moreira',region:'Sul',aliases:['Fábio Henrique']},
+{id:'francis-junior',rca:'9',name:'Francis Junior Rodrigues da Silva',region:'Sul',aliases:['Francis Junior']},
+{id:'ian-gabriel',rca:'205',name:'Ian Gabriel Borges Calu',region:'Sul',aliases:['Ian Gabriel']},
+{id:'lucas-gabriel',rca:'73',name:'Lucas Gabriel Vieira',region:'Sul',aliases:['Lucas Gabriel']},
+{id:'luciano-sousa',rca:'321',name:'Luciano de Sousa Ferreira',region:'Sul',aliases:['Luciano Sousa']},
+{id:'luiz-henrique',rca:'353',name:'Luiz Henrique Martins Gouveia',region:'Sul',aliases:['Luiz Henrique']},
+{id:'marcelo-silva',rca:'25',name:'Marcelo Silva Teixeira',region:'Sul',aliases:['Marcelo Silva']},
+{id:'victor-daniel',rca:'307',name:'Victor Daniel Pires da Silva',region:'Sul',aliases:['Victor Daniel']},
+];
