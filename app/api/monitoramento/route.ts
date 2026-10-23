@@ -1,0 +1,6 @@
+import {loadCitySales} from '../../../lib/city-sales';
+import {getAdminSession} from '../../../lib/admin-session';
+import {loadSalesData} from '../../../lib/portal-db';
+import {monitorSummary} from '../../../lib/monitor-model';
+import {privateHeaders} from '../../../lib/http';
+export async function GET(request:Request){const user=await getAdminSession();if(!user||user.role==='seller')return Response.json({message:'Entre com uma conta administrativa para abrir o monitoramento.'},{status:user?403:401,headers:privateHeaders});try{const p=new URL(request.url).searchParams;const month=p.get('month')||undefined,region=p.get('region')||'';if((month&&!/^\d{4}-\d{2}$/.test(month))||region.length>160)return Response.json({message:'Filtro inválido.'},{status:400,headers:privateHeaders});const data=await loadSalesData();if(month&&!data.rows.some(r=>r.date.startsWith(month)))return Response.json({message:'Não há registros para este mês.'},{status:400,headers:privateHeaders});const summary=monitorSummary(data,month,region);summary.citySales={};return Response.json(summary,{headers:privateHeaders})}catch{return Response.json({message:'Não foi possível consultar os dados agora.'},{status:503,headers:privateHeaders})}}

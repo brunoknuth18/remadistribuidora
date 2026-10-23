@@ -1,0 +1,6 @@
+import {getAdminSession} from '../../../lib/admin-session';
+import {AuthError} from '../../../lib/admin-auth-core';
+import {readBody,errorResponse,privateHeaders} from '../../../lib/http';
+import {saveCitySales} from '../../../lib/city-sales';
+import map from '../../../lib/municipal-map.json';
+export async function POST(request:Request){try{const user=await getAdminSession();if(!user||user.role==='seller'||user.role==='admin_editor')throw new AuthError(403,'Acesso administrativo obrigatório.');const body=await readBody(request,300000);const month=String(body.month||'');if(!/^20\d{2}-(0[1-9]|1[0-2])$/.test(month))throw new AuthError(400,'Selecione um mês válido.');const values=body.values;if(!values||typeof values!=='object'||Array.isArray(values))throw new AuthError(400,'Dados inválidos.');const entries=Object.entries(values);const known=new Set(map.cities.map(c=>c.key));if(!entries.length||entries.length>246||entries.some(([k,v])=>!known.has(k)||typeof v!=='number'||!Number.isFinite(v)||Math.abs(v)>1e12))throw new AuthError(400,'Confira as cidades e os valores da planilha.');await saveCitySales(month,Object.fromEntries(entries) as Record<string,number>,user.email);return Response.json({ok:true},{headers:privateHeaders})}catch(e){return errorResponse(e)}}

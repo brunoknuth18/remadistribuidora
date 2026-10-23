@@ -1,0 +1,7 @@
+import {getAdminSession} from '../../../lib/admin-session';
+import {database,saveSalesData} from '../../../lib/portal-db';
+import {salesImportSchema} from '../../../lib/import-model';
+import {AuthError} from '../../../lib/admin-auth-core';
+import {readBody,errorResponse,privateHeaders} from '../../../lib/http';
+export async function GET(){try{const user=await getAdminSession();if(!user||user.role==='seller'||user.role==='admin_editor')throw new AuthError(403,'Acesso administrativo obrigatório.');const data=await database().prepare('SELECT id,filename,row_count,created_by,created_at,status FROM sales_imports ORDER BY created_at DESC LIMIT 30').all();return Response.json({versions:data.results},{headers:privateHeaders})}catch(e){return errorResponse(e)}}
+export async function POST(request:Request){try{const user=await getAdminSession();if(!user||user.role==='seller'||user.role==='admin_editor')throw new AuthError(403,'Acesso administrativo obrigatório.');const body=await readBody(request,6000000);const parsed=salesImportSchema.safeParse(body.data);if(!parsed.success)throw new AuthError(400,'A prévia contém dados inválidos. Revise a associação das colunas.');const expected=String(body.expectedVersion||'legacy');try{const id=await saveSalesData(parsed.data,user.email,expected);return Response.json({ok:true,id},{headers:privateHeaders})}catch(e){if(e instanceof Error&&e.message==='import_conflict')throw new AuthError(409,'Outra importação foi publicada. Recarregue a página e revise novamente.');throw e}}catch(e){return errorResponse(e)}}
