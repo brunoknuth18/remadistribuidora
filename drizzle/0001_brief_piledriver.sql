@@ -1,0 +1,1 @@
+ALTER TABLE `admin_accounts` ADD `full_name` text;

@@ -1,0 +1,13 @@
+import {sqliteTable,text,integer} from 'drizzle-orm/sqlite-core';
+export const accounts=sqliteTable('admin_accounts',{email:text('email').primaryKey(),fullName:text('full_name'),pinHash:text('pin_hash').notNull(),salt:text('salt').notNull(),createdAt:integer('created_at').notNull()});
+export const challenges=sqliteTable('admin_challenges',{id:text('id').primaryKey(),email:text('email').notNull(),purpose:text('purpose').notNull(),codeHash:text('code_hash').notNull(),expiresAt:integer('expires_at').notNull(),attempts:integer('attempts').notNull().default(0),createdAt:integer('created_at').notNull()});
+export const sessions=sqliteTable('admin_sessions',{tokenHash:text('token_hash').primaryKey(),email:text('email').notNull(),expiresAt:integer('expires_at').notNull()});
+export const rateLimits=sqliteTable('auth_rate_limits',{key:text('key').primaryKey(),count:integer('count').notNull(),expiresAt:integer('expires_at').notNull()});
+export const users=sqliteTable('portal_users',{email:text('email').primaryKey(),fullName:text('full_name'),role:text('role').notNull(),status:text('status').notNull(),rca:text('rca'),sellerKey:text('seller_key'),updatedAt:integer('updated_at').notNull()});
+export const invites=sqliteTable('portal_invites',{tokenHash:text('token_hash').primaryKey(),email:text('email').notNull(),purpose:text('purpose').notNull(),expiresAt:integer('expires_at').notNull(),usedAt:integer('used_at'),createdBy:text('created_by').notNull()});
+export const audit=sqliteTable('portal_audit',{id:text('id').primaryKey(),actor:text('actor').notNull(),action:text('action').notNull(),subject:text('subject').notNull(),details:text('details').notNull(),createdAt:integer('created_at').notNull()});
+export const imports=sqliteTable('sales_imports',{id:text('id').primaryKey(),filename:text('filename').notNull(),metadata:text('metadata').notNull(),rowCount:integer('row_count').notNull(),createdBy:text('created_by').notNull(),createdAt:integer('created_at').notNull(),status:text('status').notNull()});
+export const records=sqliteTable('sales_records',{id:text('id').primaryKey(),importId:text('import_id').notNull(),position:integer('position').notNull(),payload:text('payload').notNull()});
+export const settings=sqliteTable('portal_settings',{key:text('key').primaryKey(),value:text('value').notNull()});
+export const rewards=sqliteTable('reward_inputs',{key:text('key').primaryKey(),payload:text('payload').notNull(),updatedBy:text('updated_by').notNull(),updatedAt:integer('updated_at').notNull()});
+export const roster=sqliteTable('seller_roster',{id:text('id').primaryKey(),rca:text('rca').notNull(),name:text('name').notNull(),region:text('region').notNull()});

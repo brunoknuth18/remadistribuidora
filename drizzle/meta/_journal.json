@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792676883213,
+      "tag": "0000_common_tag",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792677117831,
+      "tag": "0001_brief_piledriver",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792682938658,
+      "tag": "0002_swift_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1792683454195,
+      "tag": "0003_spicy_jackpot",
+      "breakpoints": true
+    }
+  ]
+}
