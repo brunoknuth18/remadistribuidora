@@ -22,7 +22,7 @@ const localBindingConfig = {
     ? [
         {
           binding: d1,
-          database_name: "rema-bi-testes"
+          database_name: "rema-bi-testes",
           database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
         },
       ]
